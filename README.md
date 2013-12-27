@@ -30,7 +30,7 @@ set_server(HashType, ID, PW, PrimeGroup, PrivLen, SaltLen)
 -> {public, {Salt, ServerPublic}, SerComputeKey/1}
 
 ###server curried function
-SerComputeKey(ClientPublic) -> {ok, Key} | {error, bad_public_key}
+SerComputeKey(ClientPublic) -> {ok, Key} | {error, bad_key}
   
 ---
 ##client
@@ -44,7 +44,7 @@ set_client(HashType, ID, PW, PrimeGroup, PrivLen)
 -> {public, ClientPublic, CliComputeKey/1}
 
 ###client curried function
-CliComputeKey({Salt, ServerPublic}) -> {ok, Key} | {error, bad_public_key}
+CliComputeKey({Salt, ServerPublic}) -> {ok, Key} | {error, bad_key}
   
 ---
 RFC 5054 Appendix B. Test passed

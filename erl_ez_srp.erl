@@ -112,7 +112,7 @@ server_secret (Cli_A, Ser_b, N, U, V) ->
     ok ->
       Ser_S = pow_mod(IntA * uint(pow_mod(V, U, N)), Ser_b, N),
       {ok, Ser_S};
-    _ -> {error, bad_public_key}
+    _ -> {error, bad_key}
   end.
   
 client_secret (Ser_B, Cli_a, N, Gen, K, U, X)->
@@ -130,7 +130,7 @@ client_secret (Ser_B, Cli_a, N, Gen, K, U, X)->
         N
       ),
       {ok, Cli_S};
-    _ -> {error, bad_public_key}
+    _ -> {error, bad_key}
   end.
   
 %==================================================================================
