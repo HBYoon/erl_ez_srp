@@ -7,7 +7,7 @@
 
 -module(erl_ez_srp).
 
-% -export([test/1, fail_test/1, test_5054/0]).
+% -export([test_5054/0]).
 % -define(console(A), io:format("srp_test>> ~p~n", [A])).
 
 % API
@@ -159,7 +159,7 @@ ngk_gen(3072, HashType) ->
   N = <<16#FFFFFFFFFFFFFFFFC90FDAA22168C234C4C6628B80DC1CD129024E088A67CC74020BBEA63B139B22514A08798E3404DDEF9519B3CD3A431B302B0A6DF25F14374FE1356D6D51C245E485B576625E7EC6F44C42E9A637ED6B0BFF5CB6F406B7EDEE386BFB5A899FA5AE9F24117C4B1FE649286651ECE45B3DC2007CB8A163BF0598DA48361C55D39A69163FA8FD24CF5F83655D23DCA3AD961C62F356208552BB9ED529077096966D670C354E4ABC9804F1746C08CA18217C32905E462E36CE3BE39E772C180E86039B2783A2EC07A28FB5C55DF06F4C52C9DE2BCBF6955817183995497CEA956AE515D2261898FA051015728E5A8AAAC42DAD33170D04507A33A85521ABDF1CBA64ECFB850458DBEF0A8AEA71575D060C7DB3970F85A6E1E4C7ABF5AE8CDB0933D71E8C94E04A25619DCEE3D2261AD2EE6BF12FFA06D98A0864D87602733EC86A64521F2B18177B200CBBE117577A615D6C770988C0BAD946E208E24FA074E5AB3143DB5BFCE0FD108E4B82D120A93AD2CAFFFFFFFFFFFFFFFF : 3072>>,
   Gen = <<5>>,
   K = get_k(HashType, N, Gen),
-  {N,Gen,K}.
+  {N,Gen,K};
   
   
 ngk_gen(4096, HashType) ->
@@ -190,29 +190,8 @@ hash(Type, B) ->
   
 
 %==================================================================================
-% test function
+% RFC 5054 Appendix B. Test
 %==================================================================================
-
-% test(PW) ->
-  % {public, Ser_Public, SerCompute} = set_server(sha256, <<"foo">>, PW, 2048, 256, 128),
-  % {public, Cli_Public, CliCompute} = set_client(sha256, <<"foo">>, PW, 2048, 256),
-  
-  % {ok, Key} = SerCompute(Cli_Public),
-  % {ok, Key} = CliCompute(Ser_Public),
-  
-  % {ok, Key}.
-  
-% fail_test(PW) ->
-  % {public, Ser_Public, SerCompute} = set_server(sha256, <<"foo">>, PW),
-  % {public, Cli_Public, CliCompute} = set_client(sha256, <<"foo">>, bin(uint(PW)-1)),
-  
-  % {ok, Key} = SerCompute(Cli_Public),
-  % {ok, FailKey} = CliCompute(Ser_Public),
-  
-  % ?console({key, Key}),
-  % ?console({fail_key, FailKey}),
-  
-  % {fail, Key}.
   
 % test_5054() ->
   % KE = <<16#7556aa045aef2cdd07abaf0f665c3e818913186f : 160>>,
