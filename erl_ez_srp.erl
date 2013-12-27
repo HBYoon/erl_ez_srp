@@ -2,14 +2,13 @@
 %% MIT License
 
 %%(yy/mm/dd)
-%% 13/12/28 - 
+%% 13/12/27 - start
 
 
 -module(erl_ez_srp).
 
--define(console(A), io:format("srp_test>> ~p~n", [A])).
-
--export([test/1, fail_test/1, test_5054/0]).
+% -export([test/1, fail_test/1, test_5054/0]).
+% -define(console(A), io:format("srp_test>> ~p~n", [A])).
 
 % API
 -export([
@@ -163,6 +162,13 @@ ngk_gen(3072, HashType) ->
   {N,Gen,K}.
   
   
+ngk_gen(4096, HashType) ->
+  N = <<16#FFFFFFFFFFFFFFFFC90FDAA22168C234C4C6628B80DC1CD129024E088A67CC74020BBEA63B139B22514A08798E3404DDEF9519B3CD3A431B302B0A6DF25F14374FE1356D6D51C245E485B576625E7EC6F44C42E9A637ED6B0BFF5CB6F406B7EDEE386BFB5A899FA5AE9F24117C4B1FE649286651ECE45B3DC2007CB8A163BF0598DA48361C55D39A69163FA8FD24CF5F83655D23DCA3AD961C62F356208552BB9ED529077096966D670C354E4ABC9804F1746C08CA18217C32905E462E36CE3BE39E772C180E86039B2783A2EC07A28FB5C55DF06F4C52C9DE2BCBF6955817183995497CEA956AE515D2261898FA051015728E5A8AAAC42DAD33170D04507A33A85521ABDF1CBA64ECFB850458DBEF0A8AEA71575D060C7DB3970F85A6E1E4C7ABF5AE8CDB0933D71E8C94E04A25619DCEE3D2261AD2EE6BF12FFA06D98A0864D87602733EC86A64521F2B18177B200CBBE117577A615D6C770988C0BAD946E208E24FA074E5AB3143DB5BFCE0FD108E4B82D120A92108011A723C12A787E6D788719A10BDBA5B2699C327186AF4E23C1A946834B6150BDA2583E9CA2AD44CE8DBBBC2DB04DE8EF92E8EFC141FBECAA6287C59474E6BC05D99B2964FA090C3A2233BA186515BE7ED1F612970CEE2D7AFB81BDD762170481CD0069127D5B05AA993B4EA988D8FDDC186FFB7DC90A6C08F4DF435C934063199FFFFFFFFFFFFFFFF : 4096>>,
+  Gen = <<5>>,
+  K = get_k(HashType, N, Gen),
+  {N,Gen,K}.
+  
+  
 %==================================================================================
 % sugar function
 %==================================================================================
@@ -187,70 +193,70 @@ hash(Type, B) ->
 % test function
 %==================================================================================
 
-test(PW) ->
-  {public, Ser_Public, SerCompute} = set_server(sha256, <<"foo">>, PW, 2048, 256, 128),
-  {public, Cli_Public, CliCompute} = set_client(sha256, <<"foo">>, PW, 2048, 256),
+% test(PW) ->
+  % {public, Ser_Public, SerCompute} = set_server(sha256, <<"foo">>, PW, 2048, 256, 128),
+  % {public, Cli_Public, CliCompute} = set_client(sha256, <<"foo">>, PW, 2048, 256),
   
-  {ok, Key} = SerCompute(Cli_Public),
-  {ok, Key} = CliCompute(Ser_Public),
+  % {ok, Key} = SerCompute(Cli_Public),
+  % {ok, Key} = CliCompute(Ser_Public),
   
-  {ok, Key}.
+  % {ok, Key}.
   
-fail_test(PW) ->
-  {public, Ser_Public, SerCompute} = set_server(sha256, <<"foo">>, PW),
-  {public, Cli_Public, CliCompute} = set_client(sha256, <<"foo">>, bin(uint(PW)-1)),
+% fail_test(PW) ->
+  % {public, Ser_Public, SerCompute} = set_server(sha256, <<"foo">>, PW),
+  % {public, Cli_Public, CliCompute} = set_client(sha256, <<"foo">>, bin(uint(PW)-1)),
   
-  {ok, Key} = SerCompute(Cli_Public),
-  {ok, FailKey} = CliCompute(Ser_Public),
+  % {ok, Key} = SerCompute(Cli_Public),
+  % {ok, FailKey} = CliCompute(Ser_Public),
   
-  ?console({key, Key}),
-  ?console({fail_key, FailKey}),
+  % ?console({key, Key}),
+  % ?console({fail_key, FailKey}),
   
-  {fail, Key}.
+  % {fail, Key}.
   
-test_5054() ->
-  KE = <<16#7556aa045aef2cdd07abaf0f665c3e818913186f : 160>>,
-  XE = <<16#94b7555aabe9127cc58ccf4993db6cf84d16c124 : 160>>,
+% test_5054() ->
+  % KE = <<16#7556aa045aef2cdd07abaf0f665c3e818913186f : 160>>,
+  % XE = <<16#94b7555aabe9127cc58ccf4993db6cf84d16c124 : 160>>,
 
-  VE = <<16#7e273de8696ffc4f4e337d05b4b375beb0dde1569e8fa00a9886d8129bada1f1822223ca1a605b530e379ba4729fdc59f105b4787e5186f5c671085a1447b52a48cf1970b4fb6f8400bbf4cebfbb168152e08ab5ea53d15c1aff87b2b9da6e04e058ad51cc72bfc9033b564e26480d78e955a5e29e7ab245db2be315e2099afb : 1024>>,
+  % VE = <<16#7e273de8696ffc4f4e337d05b4b375beb0dde1569e8fa00a9886d8129bada1f1822223ca1a605b530e379ba4729fdc59f105b4787e5186f5c671085a1447b52a48cf1970b4fb6f8400bbf4cebfbb168152e08ab5ea53d15c1aff87b2b9da6e04e058ad51cc72bfc9033b564e26480d78e955a5e29e7ab245db2be315e2099afb : 1024>>,
   
-  Ser_B_E = <<16#bd0c61512c692c0cb6d041fa01bb152d4916a1e77af46ae105393011baf38964dc46a0670dd125b95a981652236f99d9b681cbf87837ec996c6da04453728610d0c6ddb58b318885d7d82c7f8deb75ce7bd4fbaa37089e6f9c6059f388838e7a00030b331eb76840910440b1b27aaeaeeb4012b7d7665238a8e3fb004b117b58 : 1024>>,
+  % Ser_B_E = <<16#bd0c61512c692c0cb6d041fa01bb152d4916a1e77af46ae105393011baf38964dc46a0670dd125b95a981652236f99d9b681cbf87837ec996c6da04453728610d0c6ddb58b318885d7d82c7f8deb75ce7bd4fbaa37089e6f9c6059f388838e7a00030b331eb76840910440b1b27aaeaeeb4012b7d7665238a8e3fb004b117b58 : 1024>>,
   
-  Cli_A_E = <<16#61d5e490f6f1b79547b0704c436f523dd0e560f0c64115bb72557ec44352e8903211c04692272d8b2d1a5358a2cf1b6e0bfcf99f921530ec8e39356179eae45e42ba92aeaced825171e1e8b9af6d9c03e1327f44be087ef06530e69f66615261eef54073ca11cf5858f0edfdfe15efeab349ef5d76988a3672fac47b0769447b : 1024>>,
+  % Cli_A_E = <<16#61d5e490f6f1b79547b0704c436f523dd0e560f0c64115bb72557ec44352e8903211c04692272d8b2d1a5358a2cf1b6e0bfcf99f921530ec8e39356179eae45e42ba92aeaced825171e1e8b9af6d9c03e1327f44be087ef06530e69f66615261eef54073ca11cf5858f0edfdfe15efeab349ef5d76988a3672fac47b0769447b : 1024>>,
   
-  UE = <<16#ce38b9593487da98554ed47d70a7ae5f462ef019 : 160>>,
+  % UE = <<16#ce38b9593487da98554ed47d70a7ae5f462ef019 : 160>>,
   
-  SE = <<16#b0dc82babcf30674ae450c0287745e7990a3381f63b387aaf271a10d233861e359b48220f7c4693c9ae12b0a6f67809f0876e2d013800d6c41bb59b6d5979b5c00a172b4a2a5903a0bdcaf8a709585eb2afafa8f3499b200210dcc1f10eb33943cd67fc88a2f39a4be5bec4ec0a3212dc346d7e474b29ede8a469ffeca686e5a : 1024>>,
+  % SE = <<16#b0dc82babcf30674ae450c0287745e7990a3381f63b387aaf271a10d233861e359b48220f7c4693c9ae12b0a6f67809f0876e2d013800d6c41bb59b6d5979b5c00a172b4a2a5903a0bdcaf8a709585eb2afafa8f3499b200210dcc1f10eb33943cd67fc88a2f39a4be5bec4ec0a3212dc346d7e474b29ede8a469ffeca686e5a : 1024>>,
   
-  HashType = sha,
+  % HashType = sha,
   
-  I = <<"alice">>,
-  P = <<"password123">>,
-  Salt = <<16#beb25379d1a8581eb5a727673a2441ee : 128>>,
-  Cli_a = <<16#60975527035cf2ad1989806f0407210bc81edc04e2762a56afd529ddda2d4393 : 256>>,
-  Ser_b = <<16#e487cb59d31ac550471e81f00f6928e01dda08e974a004f49e61f5d105284d20 : 256>>,
+  % I = <<"alice">>,
+  % P = <<"password123">>,
+  % Salt = <<16#beb25379d1a8581eb5a727673a2441ee : 128>>,
+  % Cli_a = <<16#60975527035cf2ad1989806f0407210bc81edc04e2762a56afd529ddda2d4393 : 256>>,
+  % Ser_b = <<16#e487cb59d31ac550471e81f00f6928e01dda08e974a004f49e61f5d105284d20 : 256>>,
   
-  {N, Gen, K} = ngk_gen(1024, HashType),
-  X = get_x(HashType, Salt, I, P),
-  V = get_v(Gen, X, N),
+  % {N, Gen, K} = ngk_gen(1024, HashType),
+  % X = get_x(HashType, Salt, I, P),
+  % V = get_v(Gen, X, N),
   
-  Cli_A = get_client_key(N, Gen, Cli_a),
-  Ser_B = get_server_key(K, V, N, Gen, Ser_b),
+  % Cli_A = get_client_key(N, Gen, Cli_a),
+  % Ser_B = get_server_key(K, V, N, Gen, Ser_b),
   
-  U = get_u(HashType, N, Cli_A, Ser_B), 
+  % U = get_u(HashType, N, Cli_A, Ser_B), 
   
-  {ok, Ser_S} = server_secret (Cli_A, Ser_b, N, U, V),
-  {ok, Cli_S} = client_secret(Ser_B, Cli_a, N, Gen, K, U, X),
+  % {ok, Ser_S} = server_secret (Cli_A, Ser_b, N, U, V),
+  % {ok, Cli_S} = client_secret(Ser_B, Cli_a, N, Gen, K, U, X),
   
-  KE = K,
-  XE = X,
-  VE = V,
-  Ser_B = Ser_B_E,
-  Cli_A = Cli_A_E,
-  U = UE,
-  Ser_S = Cli_S = SE,
+  % KE = K,
+  % XE = X,
+  % VE = V,
+  % Ser_B = Ser_B_E,
+  % Cli_A = Cli_A_E,
+  % U = UE,
+  % Ser_S = Cli_S = SE,
   
-  ?console({ser_s, Ser_S}),
-  ?console({cli_s, Cli_S}),
-  ?console({se, SE}),
-  ok.
+  % ?console({ser_s, Ser_S}),
+  % ?console({cli_s, Cli_S}),
+  % ?console({se, SE}),
+  % ok.
