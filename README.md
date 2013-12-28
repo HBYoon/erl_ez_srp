@@ -30,6 +30,7 @@ set_server(HashType, ID, PW, PrimeGroup, PrivLen, SaltLen)
 -> {public, {Salt, ServerPublic}, SerComputeKey/1}
 
 ###server curried function
+SerComputeKey(ngk) -> {N, G, K}
 SerComputeKey(ClientPublic) -> {ok, Key} | {error, bad_key}
   
 ---
@@ -44,6 +45,7 @@ set_client(HashType, ID, PW, PrimeGroup, PrivLen)
 -> {public, ClientPublic, CliComputeKey/1}
 
 ###client curried function
+CliComputeKey(ngk) -> {N, G, K}
 CliComputeKey({Salt, ServerPublic}) -> {ok, Key} | {error, bad_key}
   
 ---
