@@ -27,12 +27,12 @@ set_server(HashType, ID, PW, PrimeGroup)
 
 set_server(HashType, ID, PW, PrimeGroup, PrivLen, SaltLen) 
 
--> {public, {Salt, ServerPublic}, SerComputeKey/1}
+-> {public, {Salt, ServerPublic}, SerCompute/1}
 
 ###server curried function
-SerComputeKey(ngk) -> {N_Prime, Generator, K_Multiplier}
+SerCompute(ngk) -> {N_Prime, Generator, K_Multiplier}
 
-SerComputeKey(ClientPublic) -> {ok, Secret} | {error, bad_key}
+SerCompute(ClientPublic) -> {ok, Secret} | {error, bad_key}
   
 ---
 ##client
@@ -43,12 +43,12 @@ set_client(HashType, ID, PW, PrimeGroup)
 
 set_client(HashType, ID, PW, PrimeGroup, PrivLen) 
 
--> {public, ClientPublic, CliComputeKey/1}
+-> {public, ClientPublic, CliCompute/1}
 
 ###client curried function
-CliComputeKey(ngk) -> {N_Prime, Generator, K_Multiplier}
+CliCompute(ngk) -> {N_Prime, Generator, K_Multiplier}
 
-CliComputeKey({Salt, ServerPublic}) -> {ok, Secret} | {error, bad_key}
+CliCompute({Salt, ServerPublic}) -> {ok, Secret} | {error, bad_key}
   
 ---
 RFC 5054 Appendix B. Test passed
