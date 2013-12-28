@@ -12,9 +12,9 @@ srp_test() ->
   {public, Cli_Public, CliCompute} = 
       erl_ez_srp:set_client(sha256, <<"foo">>, <<"test">>, 2048, 128),
   
-  {ok, Key} = SerCompute(Cli_Public),
-  {ok, Key} = CliCompute(Ser_Public),
-  {ok, Key}.
+  {ok, Secret} = SerCompute(Cli_Public),
+  {ok, Secret} = CliCompute(Ser_Public),
+  {ok, Secret}.
 ```
 
 EXPORTS
@@ -32,7 +32,7 @@ set_server(HashType, ID, PW, PrimeGroup, PrivLen, SaltLen)
 ###server curried function
 SerComputeKey(ngk) -> {N_Prime, Generator, K_Multiplier}
 
-SerComputeKey(ClientPublic) -> {ok, Key} | {error, bad_key}
+SerComputeKey(ClientPublic) -> {ok, Secret} | {error, bad_key}
   
 ---
 ##client
@@ -48,7 +48,7 @@ set_client(HashType, ID, PW, PrimeGroup, PrivLen)
 ###client curried function
 CliComputeKey(ngk) -> {N_Prime, Generator, K_Multiplier}
 
-CliComputeKey({Salt, ServerPublic}) -> {ok, Key} | {error, bad_key}
+CliComputeKey({Salt, ServerPublic}) -> {ok, Secret} | {error, bad_key}
   
 ---
 RFC 5054 Appendix B. Test passed

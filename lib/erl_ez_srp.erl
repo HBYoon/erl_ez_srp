@@ -53,7 +53,7 @@ set_server(HashType, ID, PW, PrimeGroup, PrivLen, SaltLen) ->
     (Cli_A) ->
       U = get_u(HashType, N, Cli_A, Ser_B),
       
-      %%return {ok, Key} | {error, bad_key}
+      %%return {ok, Sec} | {error, bad_key}
       server_secret (Cli_A, Ser_b, N, U, V)
   end}.
   
@@ -80,7 +80,7 @@ set_client(HashType, ID, PW, PrimeGroup, PrivLen) ->
       X = get_x(HashType, Salt, ID, PW),
       U = get_u(HashType, N, Cli_A, Ser_B),
       
-      %%return {ok, Key} | {error, bad_key}
+      %%return {ok, Sec} | {error, bad_key}
       client_secret(Ser_B, Cli_a, N, Gen, K, U, X)
   end}.
   
@@ -114,7 +114,7 @@ get_client_key(N, Gen, Cli_a) ->
   pow_mod(Gen, Cli_a, N).
   
 %% check Cli_A % N - from RFC 5054
-%% return {ok, Key}
+%% return {ok, Sec}
 server_secret (Cli_A, Ser_b, N, U, V) ->
   IntA = uint(Cli_A),
   IntN = uint(N),
@@ -129,7 +129,7 @@ server_secret (Cli_A, Ser_b, N, U, V) ->
   
 %% check Ser_B % N - from RFC 5054
 %% check U         - from http://srp.stanford.edu/design.html
-%% return {ok, Key}
+%% return {ok, Sec}
 client_secret (Ser_B, Cli_a, N, Gen, K, U, X)->
   IntB = uint(Ser_B),
   IntN = uint(N),
