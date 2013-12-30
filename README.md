@@ -50,7 +50,7 @@ set_client(HashType, ID, PW, PrimeGroup, PrivLen)
 ###client curried function
 CliCompute(ngk) -> {N_Prime, Generator, K_Multiplier}
 
-CliCompute({Salt, ServerPublic}) -> {ok, Secret} | {error, bad_key}
+CliCompute({Salt, ServerPublicKey}) -> {ok, Secret} | {error, bad_key}
   
 ---
 RFC 5054 Appendix B. Test passed
