@@ -29,6 +29,8 @@ set_server(HashType, ID, PW, PrimeGroup, PrivLen, SaltLen)
 
 -> {public, {Salt, ServerPublic}, SerCompute/1}
 
+    {Salt, ServerPublicKey} = ServerPublic
+
 ###server curried function
 SerCompute(ngk) -> {N_Prime, Generator, K_Multiplier}
 
