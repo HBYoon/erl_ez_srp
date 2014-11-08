@@ -3,6 +3,7 @@
 
 %%(yy/mm/dd)
 %% 13/12/27 - start
+%% 14/11/08 - refine code
 
 
 -module(erl_ez_srp).
@@ -88,64 +89,62 @@ set_client(HashType, ID, PW, PrimeGroup, PrivLen) ->
 % srp internal function
 %==================================================================================
 pad_to(Width, Bin) ->
-  PadBit = ((Width - size(Bin)) * 8),
-  if 
-    PadBit > 0 -> << 0: PadBit, Bin/binary >>;
-    true       -> Bin
-  end.
+  PadBit = Width - erlang:bit_size(Bin),
+  << 0: PadBit, Bin/binary >>.
 
 get_x(HashType, Salt, I, P) ->
   hash(HashType, [Salt, hash(HashType, [I, <<":">>, P])]).
   
 get_v(Gen, X, N) ->
-  pad_to(erlang:byte_size(N),pow_mod(Gen, X, N)).
+  pad_to(erlang:bit_size(N), pow_mod(Gen, X, N)).
   
 get_k(HashType, N, G) ->
-  hash(HashType, [N, (pad_to(erlang:byte_size(N), G))]).
+  hash(HashType, [N, (pad_to(erlang:bit_size(N), G))]).
   
 get_u(HashType, N, Cli_A, Ser_B) ->
-  SN = size(N),
+  SN = erlang:bit_size(N),
   hash(HashType, [pad_to(SN, Cli_A), pad_to(SN, Ser_B)]).
   
 get_server_key(K, V, N, Gen, Ser_b) ->
+  %% k*v + g^b % N
   bin(((uint(K) * uint(V)) + uint((pow_mod(Gen, Ser_b, N)))) rem uint(N)).
   
 get_client_key(N, Gen, Cli_a) ->
+  %% g^a % N
   pow_mod(Gen, Cli_a, N).
   
 %% check Cli_A % N - from RFC 5054
-%% return {ok, Sec}
+%% return {ok, Sec} | {error, bad_key}
 server_secret (Cli_A, Ser_b, N, U, V) ->
   IntA = uint(Cli_A),
   IntN = uint(N),
-  case (
-    if (IntA rem IntN) =:= 0 -> false; true -> ok end
-  ) of
-    ok ->
+  case (IntA rem IntN) of
+    0 -> {error, bad_key}; 
+    _other -> 
+      %% <premaster secret> = (A * v^u) ^ b % N
       Ser_S = pow_mod(IntA * uint(pow_mod(V, U, N)), Ser_b, N),
-      {ok, Ser_S};
-    _ -> {error, bad_key}
+      {ok, Ser_S}
   end.
+  
   
 %% check Ser_B % N - from RFC 5054
 %% check U         - from http://srp.stanford.edu/design.html
-%% return {ok, Sec}
+%% return {ok, Sec} | {error, bad_key}
 client_secret (Ser_B, Cli_a, N, Gen, K, U, X)->
   IntB = uint(Ser_B),
   IntN = uint(N),
   IntU = uint(U),
-  case {
-    if (IntB rem IntN) =:= 0 -> false; true -> ok end, 
-    if  IntU           =:= 0 -> false; true -> ok end
-  } of
-    {ok, ok} -> 
+  case {IntB rem IntN, IntU} of
+    {_, 0} -> {error, bad_key};
+    {0, _} -> {error, bad_key};
+    _other -> 
+      %% <premaster secret> = (B - (k * g^x)) ^ (a + (u * x)) % N
       Cli_S = pow_mod(
         IntB + IntN - (uint(K) * uint(pow_mod(Gen, X, N)) rem IntN),
         (uint(Cli_a) + IntU * uint(X)),
         N
       ),
-      {ok, Cli_S};
-    _ -> {error, bad_key}
+      {ok, Cli_S}
   end.
   
 %==================================================================================
